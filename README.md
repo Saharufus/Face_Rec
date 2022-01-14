@@ -1,5 +1,7 @@
 # Building a Facial Recognition API
 
+![img](https://miro.medium.com/max/1400/1*DKSQVZdEa2GEv2ksxWViTg.gif)
+
 ### Our project
 In this project we are going to build a NN that will help us identify different people in pictures. 📸
 
