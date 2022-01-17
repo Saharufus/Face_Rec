@@ -9,7 +9,7 @@ We will use the dataset of [Labeled Faces in the Wild](http://vis-www.cs.umass.e
 
 (images from EDA)
 
-In order to do our predictions we are going to base our model in similarities and that’s why  it’s important that we divide our images in (`triplet loss`:
+In order to do our predictions we are going to base our model in similarities and that’s why  it’s important that we divide our images in (`triplet loss`):
 
 `Anchor dataset`:  actual image. The picture to compare to.  
 
