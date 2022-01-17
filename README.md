@@ -7,7 +7,7 @@ In this project we are going to build a NN that will help us compare if to pictu
 
 We will use the dataset of [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/#download) enriched with some pictures of ourselves to make sure that we have enough amount of samples of the same person.🤩 This is what the dataset looks like in some examples:
 
-(images from EDA)
+![img](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9cDUOIjbzfmtp4hhEyJ6EaNGdLAOk73a6ew&usqp=CAU)
 
 In order to do our predictions we are going to base our model in similarities and that’s why  it’s important that we divide our images in (`triplet loss`):
 
