@@ -43,12 +43,21 @@ In order to preprocess we need to resize and scale the data.
 - [numpy](https://numpy.org/doc/)
 - [tensorflow]( https://www.tensorflow.org/)
 - [matplotlib]( https://matplotlib.org/)
+- [pandas](https://pandas.pydata.org/docs/)
+- [numpy](https://numpy.org/doc/)
+- [sklearn](https://scikit-learn.org/stable/)
+- [warnings](https://docs.python.org/3/library/warnings.html)
+- [seaborn](https://seaborn.pydata.org/)
 
 
 ### Contents of the repository:
--	Taking pictures of ourselves
--	EDA + Preprocessing
--	Baseline model
+- `baseline_model.ipynb`: where the baseline model is created
+- `baseline_model.py`: where the baseline model functions are created
+- `conf.py`: with the constants
+- `get_samples.ipnyb`: where we create the dataset with pictures of ourselves
+- `preprocessing.py`: where the preprocessing functions take place
+- `data`: a folder with the 3 folders: `anchor`, `positive` and `negative`.
+- `requirements.txt`
 
 
 ### References
