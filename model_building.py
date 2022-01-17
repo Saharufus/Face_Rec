@@ -48,8 +48,8 @@ def build_siamese_model():
     # combine
     embedding = one_image_stream()
     dist = DistLayer(name='distance')(embedding(input_img), embedding(val_img))
-    
+
     # classifying
     classifier = Dense(1, activation='sigmoid', name='classifier')(dist)
 
-    return Model(inputs=[input_img, val_img], outputs=[classifier], name='Siamese Network')
+    return Model(inputs=[input_img, val_img], outputs=[classifier], name='SiameseNetwork')
