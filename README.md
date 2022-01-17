@@ -29,9 +29,13 @@ Before we start, we will separate our data in this 3 folders: `positive, negativ
 `p`: takes a positive picture
 `q`: closes the camera
 
-### 2.	Preprocessing
+### 2.	Preprocessing and EDA
 In order to preprocess we need to resize and scale the data. 
 
+### 3. Baseline Model
+Our baseline model is a `Bernouilli Naive Bayes Classifier` with an accuracy of `73%`.
+
+In this step, the dataframe consists on 160 rows with pictures of ourselves. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
 
 ### Prerequirements:
 -	Install requirements.txt
