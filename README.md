@@ -30,6 +30,8 @@ Before we start, we will separate our data in this 3 folders: `positive, negativ
 `q`: closes the camera
 
 ### 2.	Preprocessing and EDA
+The EDA consists in observing how the different categories of images are balanced, checking that the images have the same size and displaying a random sample of images from each class.
+
 In order to preprocess we need to resize and scale the data. 
 
 ### 3. Baseline Model
@@ -66,6 +68,7 @@ In this step, the dataframe consists on 200 rows with pictures of ourselves. For
 
 ### References
 [Youtube Video](https://www.youtube.com/watch?v=LKispFFQ5GU)
+
 [paper](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf)
 
 ### Authors 
