@@ -5,33 +5,25 @@ import cv2
 from sklearn.model_selection import train_test_split
 
 
+def rescale_resize(img):
+    return cv2.resize(img, (105, 105)) / 255
+
+
+def load_from_path(path, img_num):
+    dir_list = os.listdir(path)
+    imgs = []
+    for i in range(img_num):
+        img = cv2.imread(os.path.join(path, dir_list[i]))
+        img = rescale_resize(img)
+        imgs.append(img)
+    return np.array(imgs)
+
+
 def load_data(img_num=300):
     """loads the data to three np.array (anchor, positive, negative)"""
-    # setting lists to fill
-    anchor = []
-    positive = []
-    negative = []
-
-    # getting img filepath
-    anc_file_list = os.listdir(config.ANC_PATH)
-    pos_file_list = os.listdir(config.POS_PATH)
-    neg_file_list = os.listdir(config.NEG_PATH)
-
-    for i in range(img_num):
-        # getting the image
-        anc_img = cv2.imread(os.path.join(config.ANC_PATH, anc_file_list[i]))
-        pos_img = cv2.imread(os.path.join(config.POS_PATH, pos_file_list[i]))
-        neg_img = cv2.imread(os.path.join(config.NEG_PATH, neg_file_list[i]))
-
-        # resize and rescale
-        anc_img = cv2.resize(anc_img, (105, 105)) / 255
-        pos_img = cv2.resize(pos_img, (105, 105)) / 255
-        neg_img = cv2.resize(neg_img, (105, 105)) / 255
-
-        # filling
-        anchor.append(anc_img)
-        positive.append(pos_img)
-        negative.append(neg_img)
+    anchor = load_from_path(config.ANC_PATH, img_num)
+    positive = load_from_path(config.POS_PATH, img_num)
+    negative = load_from_path(config.NEG_PATH, img_num)
 
     # creating dataset
     X = np.concatenate([np.array([anchor, positive]), np.array([anchor, negative])], axis=1)
