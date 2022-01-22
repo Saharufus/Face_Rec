@@ -4,7 +4,7 @@ import tensorflow as tf
 # -------------------------------------------------------------------------------------------------
 # helper functions
 # -------------------------------------------------------------------------------------------------
-def scaler(filepath):
+def scaler():
     """
     scale the img to 105x105 pixels and pix vals [0, 1]
     :param filepath: the path to *.jpg
@@ -37,7 +37,7 @@ def label(data1, data2, is_twin=True):
 
 def prepro_2_img(filepath1, filepath2, is_twin):
     """this function is for mapping the preprocess on the dataset"""
-    return scaler(filepath1), scaler(filepath2), is_twin
+    return {'val image': scaler(filepath1), 'input image': scaler(filepath2)}, is_twin
 
 
 # -------------------------------------------------------------------------------------------------
@@ -52,13 +52,12 @@ def create_dataset(anchor, positive, negative):
     :return: tf Dataset of positive and negative against anchor with label
     """
     # label positive
-    positive_labeled = label(anchor, positive, True)
+    positive_labeled = label({'val image': anchor, 'input image': positive}, True)
     # label negative
-    negative_labeled = label(anchor, negative, False)
+    negative_labeled = label({'val image': anchor, 'input image': positive}, False)
     # concat, map and cache
     data = positive_labeled.concatenate(negative_labeled)
     data = data.map(prepro_2_img)
-    data = data.cache()
     return data
 
 

@@ -34,7 +34,7 @@ class DistLayer(Layer):
         super().__init__()
 
     def call(self, input_embedding, val_embedding):
-        return tf.math.abs(input_embedding - val_embedding)
+        return tf.math.square(input_embedding - val_embedding)
 
 
 def build_siamese_model():
