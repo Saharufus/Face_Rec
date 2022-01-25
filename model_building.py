@@ -33,8 +33,8 @@ class DistLayer(Layer):
     def __init__(self, **kwargs):
         super().__init__()
 
-    def call(self, input_embedding, val_embedding):
-        return tf.math.square(input_embedding - val_embedding)
+    def call(self, val_embedding, input_embedding):
+        return tf.math.abs(input_embedding - val_embedding)
 
 
 def build_siamese_model():
@@ -52,4 +52,4 @@ def build_siamese_model():
     # classifying
     classifier = Dense(1, activation='sigmoid', name='classifier')(dist)
 
-    return Model(inputs=[input_img, val_img], outputs=[classifier], name='SiameseNetwork')
+    return Model(inputs=[val_img, input_img], outputs=[classifier], name='SiameseNetwork')
