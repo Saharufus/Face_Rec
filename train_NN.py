@@ -21,7 +21,7 @@ def train_model(epochs, batch_size, model_exists=False):
         model.compile(optimizer=Adam(learning_rate=1e-4), loss='binary_crossentropy', metrics='accuracy')
     es = EarlyStopping(
         monitor='val_loss',
-        patience=5,
+        patience=20,
         restore_best_weights=True)
     model.fit(
         [X_train[0, :, :, :, :], X_train[1, :, :, :, :]],
@@ -34,4 +34,4 @@ def train_model(epochs, batch_size, model_exists=False):
 
 
 if __name__ == '__main__':
-    train_model(50, 32)
+    train_model(200, 16)
