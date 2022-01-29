@@ -1,9 +1,45 @@
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Layer, Input, Dense, Conv2D, MaxPooling2D, Flatten
 import tensorflow as tf
+from tensorflow.keras.applications.vgg16 import VGG16
+import config
 
 
-def one_image_stream():
+# ---------------------------------------------------------------------------------------------------------------
+# Siamese model
+# ---------------------------------------------------------------------------------------------------------------
+
+class DistLayer(Layer):
+    """Layer that compares dist between two images"""
+    def __init__(self, **kwargs):
+        super().__init__()
+
+    def call(self, val_embedding, input_embedding):
+        return tf.math.abs(input_embedding - val_embedding)
+
+
+def build_siamese_model(one_stream):
+    # two inputs:
+    anc = Input(shape=(config.IMG_SHAPE, config.IMG_SHAPE, 3))
+    inp = Input(shape=(config.IMG_SHAPE, config.IMG_SHAPE, 3))
+
+    # one stream:
+    emb = one_stream
+
+    # distance layer:
+    dist = DistLayer(name='distance')(emb(anc), emb(inp))
+
+    # classifying:
+    classifier = Dense(1, activation='sigmoid', name='classifier')(dist)
+
+    return Model(inputs=[anc, inp], outputs=[classifier])
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# One streams
+# ---------------------------------------------------------------------------------------------------------------
+
+def one_youtube_stream():
     """Builds a one image stream model"""
     # input
     inp = Input(shape=(105, 105, 3), name='input layer')
@@ -28,28 +64,33 @@ def one_image_stream():
     return Model(inputs=[inp], outputs=[dense], name='one_image_stream')
 
 
-class DistLayer(Layer):
-    """Layer that compares dist between two images"""
-    def __init__(self, **kwargs):
-        super().__init__()
+def one_vgg16_stream():
+    inp = Input(shape=(224, 224, 3))
+    vgg_model = VGG16(include_top=False, input_shape=(224, 224, 3))
+    vgg_model.trainable = False
+    vgg_model = vgg_model(inp)
+    flat = Flatten()(vgg_model)
+    return Model(inputs=[inp], outputs=[flat])
 
-    def call(self, val_embedding, input_embedding):
-        return tf.math.abs(input_embedding - val_embedding)
 
+def my_one_stream():
+    inp = Input(shape=(100, 100, 3), name='Input')
 
-def build_siamese_model():
-    """Build a classifier NN"""
-    # input image
-    input_img = Input(shape=(105, 105, 3), name='input image')
+    # first block
+    conv11 = Conv2D(32, (7, 7), activation='relu', name='conv11')(inp)
+    conv12 = Conv2D(32, (5, 5), activation='relu', name='conv12')(conv11)
+    conv13 = Conv2D(64, (3, 3), activation='relu', name='conv13')(conv12)
+    max1 = MaxPooling2D((2, 2))(conv13)
 
-    # anchor image
-    val_img = Input(shape=(105, 105, 3), name='val image')
+    # second block
+    conv21 = Conv2D(128, (7, 7), activation='relu', name='conv21')(max1)
+    conv22 = Conv2D(128, (5, 5), activation='relu', name='conv22')(conv21)
+    conv23 = Conv2D(256, (3, 3), activation='relu', name='conv23')(conv22)
+    max2 = MaxPooling2D((2, 2))(conv23)
 
-    # combine
-    embedding = one_image_stream()
-    dist = DistLayer(name='distance')(embedding(input_img), embedding(val_img))
+    # third block
+    conv3 = Conv2D(512, (7, 7), activation='relu', name='conv3')(max2)
+    flatten = Flatten(name='flatten')(conv3)
+    dense = Dense(256, activation='relu', name='dense')(flatten)
 
-    # classifying
-    classifier = Dense(1, activation='sigmoid', name='classifier')(dist)
-
-    return Model(inputs=[val_img, input_img], outputs=[classifier], name='SiameseNetwork')
+    return Model(inputs=[inp], outputs=[dense], name='MyOneStream')
