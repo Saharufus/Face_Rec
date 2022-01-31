@@ -21,6 +21,8 @@ We’re going to compare the anchor image with the input image and it will compa
 
 Before we start, we will separate our data in this 3 folders: `positive, negative and anchor`. 
 
+We need to make sure we have pictures of ourselves and from random people in all of our folders in a balanced way (positive, negative and anchor).
+
 **Let’s start! 🚀**
 
 ### 1.	Build the dataset with images of ourselves: we are going to use Open CV which allows the access to our camera. We need to make sure the resolution of the image is 255x255. 
@@ -33,9 +35,10 @@ Before we start, we will separate our data in this 3 folders: `positive, negativ
 In order to preprocess we need to resize and scale the data. 
 
 ### 3. Baseline Model
-Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `95%`.
+Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `51%`.
+The accuracy is really bad - it's the same as saying that the images are always the same or that they are always different.
 
-In this step, the dataframe consists on 200 rows with pictures of ourselves. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
+In this step, the dataframe consists on 2271 rows with pictures of ourselves and random people. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
 
 ### Prerequirements:
 -	Install requirements.txt
@@ -62,6 +65,8 @@ In this step, the dataframe consists on 200 rows with pictures of ourselves. For
 - `preprocessing.py`: where the preprocessing functions take place
 - `data`: a folder with the 3 folders: `anchor`, `positive` and `negative`.
 - `requirements.txt`
+- `creating_DF.ipynb`: where all the images from the folders were reorganized so that we have a balanced dataset.
+- `creating_DF.py`: where the functions needed for creating the DF are stored.
 
 
 ### References
