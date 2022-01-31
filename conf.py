@@ -7,4 +7,4 @@ LABEL_CONST = 2
 ANC_PATH = "/Users/julietastaryfurmanshalom/OneDrive/ITC/Face_Rec/data/anchor"
 POS_PATH = "/Users/julietastaryfurmanshalom/OneDrive/ITC/Face_Rec/data/positive"
 NEG_PATH = "/Users/julietastaryfurmanshalom/OneDrive/ITC/Face_Rec/data/negative"
-
+NEG_PATH_CLEANED = '/Users/julietastaryfurmanshalom/OneDrive/ITC/Face_Rec/data/negative_cleaned'
