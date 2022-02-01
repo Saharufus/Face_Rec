@@ -14,8 +14,30 @@ class DistLayer(Layer):
     def __init__(self, **kwargs):
         super().__init__()
 
+    def build(self, input_shape):
+        a_init = tf.random_normal_initializer()
+        self.a = tf.Variable(
+            initial_value=a_init(shape=(input_shape[-1],),
+                                 dtype='float32'),
+            trainable=True)
+
+        b_init = tf.zeros_initializer()
+        self.b = tf.Variable(
+            initial_value=b_init(shape=(input_shape[-1],),
+                                 dtype='float32'),
+            trainable=True)
+
     def call(self, val_embedding, input_embedding):
-        return tf.math.abs(input_embedding - val_embedding)
+        return (tf.math.sqrt(input_embedding**2 - val_embedding**2) * self.a) + self.b
+
+
+class CombLayer(Layer):
+    """Layer that compares dist between two images"""
+    def __init__(self, **kwargs):
+        super().__init__()
+
+    def call(self, old_layer, new_layer):
+        return old_layer + new_layer
 
 
 def build_siamese_model(one_stream):
@@ -64,33 +86,47 @@ def one_youtube_stream():
     return Model(inputs=[inp], outputs=[dense], name='one_image_stream')
 
 
-def one_vgg16_stream():
+def one_vgg16_stream(trainable=False):
     inp = Input(shape=(224, 224, 3))
     vgg_model = VGG16(include_top=False, input_shape=(224, 224, 3))
-    vgg_model.trainable = False
+    vgg_model.trainable = trainable
     vgg_model = vgg_model(inp)
     flat = Flatten()(vgg_model)
     return Model(inputs=[inp], outputs=[flat])
 
 
 def my_one_stream():
-    inp = Input(shape=(100, 100, 3), name='Input')
+    inp = Input(shape=(200, 200, 3), name='Input')
 
     # first block
-    conv11 = Conv2D(32, (7, 7), activation='relu', name='conv11')(inp)
-    conv12 = Conv2D(32, (5, 5), activation='relu', name='conv12')(conv11)
-    conv13 = Conv2D(64, (3, 3), activation='relu', name='conv13')(conv12)
-    max1 = MaxPooling2D((2, 2))(conv13)
+    conv11 = Conv2D(64, (5, 5), activation='relu', name='conv11')(inp)
+    conv12 = Conv2D(64, (5, 5), activation='relu', name='conv12')(conv11)
+    max1 = MaxPooling2D((2, 2), name='max1')(conv12)
 
     # second block
-    conv21 = Conv2D(128, (7, 7), activation='relu', name='conv21')(max1)
+    conv21 = Conv2D(128, (5, 5), activation='relu', name='conv21')(max1)
     conv22 = Conv2D(128, (5, 5), activation='relu', name='conv22')(conv21)
-    conv23 = Conv2D(256, (3, 3), activation='relu', name='conv23')(conv22)
-    max2 = MaxPooling2D((2, 2))(conv23)
+    max2 = MaxPooling2D((2, 2), name='max2')(conv22)
 
     # third block
-    conv3 = Conv2D(512, (7, 7), activation='relu', name='conv3')(max2)
-    flatten = Flatten(name='flatten')(conv3)
-    dense = Dense(256, activation='relu', name='dense')(flatten)
+    conv31 = Conv2D(256, (5, 5), activation='relu', name='conv31')(max2)
+    conv32 = Conv2D(256, (5, 5), activation='relu', name='conv32')(conv31)
+    max3 = MaxPooling2D((2, 2), name='max3')(conv32)
+
+    # forth block
+    conv41 = Conv2D(512, (5, 5), activation='relu', name='conv41')(max3)
+    conv42 = Conv2D(512, (5, 5), activation='relu', name='conv42')(conv41)
+    max4 = MaxPooling2D((2, 2), name='max4')(conv42)
+
+    # last block
+    conv_last = Conv2D(512, (3, 3), activation='relu', name='conv_last')(max4)
+    flatten = Flatten(name='flatten')(conv_last)
+    dense = Dense(128, activation='relu', name='dense')(flatten)
 
     return Model(inputs=[inp], outputs=[dense], name='MyOneStream')
+
+
+# print(build_siamese_model(one_vgg16_stream()).summary())
+
+# https://keras.io/examples/vision/siamese_network/
+# https://hub.packtpub.com/face-recognition-using-siamese-networks-tutorial/
