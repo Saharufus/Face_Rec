@@ -21,28 +21,53 @@ def rescale_resize(img):
     return cv2.resize(img, (105, 105)) / 255
 
 
-def load_from_path(path, img_num):
+def load_from_path(path, nr_rows=56434):
     """
     This function loads from a given path of a folder, all the content to an array
     :param path: the path of the folder
     :param img_num: number of images in the folder
     :return: np array with the content of the folder
     """
-    print(path)
+    imgs = []
     dir_list = os.listdir(path)
+
     if 'negative_cleaned' in path:
-        random.shuffle(dir_list)
+        for i in range(nr_rows):
+            sample = random.sample(dir_list, 1)[0]
+            img = cv2.imread(os.path.join(path, sample))
+            img = rescale_resize(img)
+            imgs.append(img)
+
     else:
         dir_list = sorted(dir_list)
-    imgs = []
-    for i in range(img_num):
-        img = cv2.imread(os.path.join(path, dir_list[i]))
-        img = rescale_resize(img)
-        imgs.append(img)
+
+        img_num = len(dir_list)
+        for i in range(img_num):
+            if 'anchor' in path:
+                img = cv2.imread(os.path.join(path, dir_list[i]))
+                img = rescale_resize(img)
+                for _ in range(filtered_people[dir_list[i][:-9]]):
+                    imgs.append(img)
+
+            elif 'positive' in path:
+                name = dir_list[i][:-9]
+                if name != "":
+                    files = []
+                    for name in glob.glob(path + name + '*'):
+                        files.append(name)
+                    files = sorted(files)
+                    for file in files:
+                        print(file)
+                        if file != "":
+                            img = cv2.imread(file)
+                            img = rescale_resize(img)
+                            imgs.append(img)
+                    print("HERE")
+
     return np.array(imgs)
 
 
-def load_data(img_num=2271):
+def load_data(img_num=56434):
     """
     This function loads the data to three np.array (anchor, positive, negative)
     :param img_num: number of images to load (by default 2271)
