@@ -23,6 +23,7 @@ def create_voters(name):
 
         if cv2.waitKey(1) & 0XFF == ord('v'):
             print('Taking pictures...')
+            # captures 20 images of a person when 'v' is pressed
             for i in range(20):
                 r, f = cap.read()
                 f = f[start_frame:start_frame + 250, start_frame:start_frame + 250]
@@ -39,4 +40,4 @@ def create_voters(name):
 
 
 if __name__ == '__main__':
-    create_voters('Sahar')
+    create_voters('Orelle')

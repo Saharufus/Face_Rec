@@ -2,7 +2,6 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Layer, Input, Dense, Conv2D, MaxPooling2D, Flatten
 import tensorflow as tf
 from tensorflow.keras.applications.vgg16 import VGG16
-import config
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -14,21 +13,21 @@ class DistLayer(Layer):
     def __init__(self, **kwargs):
         super().__init__()
 
-    def build(self, input_shape):
-        a_init = tf.random_normal_initializer()
-        self.a = tf.Variable(
-            initial_value=a_init(shape=(input_shape[-1],),
-                                 dtype='float32'),
-            trainable=True)
-
-        b_init = tf.zeros_initializer()
-        self.b = tf.Variable(
-            initial_value=b_init(shape=(input_shape[-1],),
-                                 dtype='float32'),
-            trainable=True)
+    # def build(self, input_shape):
+    #     a_init = tf.random_normal_initializer()
+    #     self.a = tf.Variable(
+    #         initial_value=a_init(shape=(input_shape[-1],),
+    #                              dtype='float32'),
+    #         trainable=True)
+    #
+    #     b_init = tf.zeros_initializer()
+    #     self.b = tf.Variable(
+    #         initial_value=b_init(shape=(input_shape[-1],),
+    #                              dtype='float32'),
+    #         trainable=True)
 
     def call(self, val_embedding, input_embedding):
-        return (tf.math.sqrt(input_embedding**2 - val_embedding**2) * self.a) + self.b
+        return tf.math.abs(input_embedding - val_embedding)
 
 
 class CombLayer(Layer):
@@ -42,8 +41,8 @@ class CombLayer(Layer):
 
 def build_siamese_model(one_stream):
     # two inputs:
-    anc = Input(shape=(config.IMG_SHAPE, config.IMG_SHAPE, 3))
-    inp = Input(shape=(config.IMG_SHAPE, config.IMG_SHAPE, 3))
+    anc = Input(shape=one_stream.input_shape[-3:])
+    inp = Input(shape=one_stream.input_shape[-3:])
 
     # one stream:
     emb = one_stream
@@ -125,8 +124,6 @@ def my_one_stream():
 
     return Model(inputs=[inp], outputs=[dense], name='MyOneStream')
 
-
-# print(build_siamese_model(one_vgg16_stream()).summary())
 
 # https://keras.io/examples/vision/siamese_network/
 # https://hub.packtpub.com/face-recognition-using-siamese-networks-tutorial/

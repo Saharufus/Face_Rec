@@ -12,7 +12,7 @@ import config
 
 def rescale_resize(img):
     """rescale the image"""
-    return cv.resize(img, (config.IMG_SHAPE, config.IMG_SHAPE)) / 255
+    return cv.resize(img, config.IMG_SHAPE) / 255
 
 
 def get_img(path):
@@ -67,6 +67,7 @@ def load_negative_pair():
 # ---------------------------------------------------------------------------------------------------------------
 
 def load_all_from_path(path):
+    """loads every file from path and return it as numpy array"""
     dir_list = os.listdir(path)
     imgs = []
     for file in dir_list:
