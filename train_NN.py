@@ -1,0 +1,52 @@
+from model_building import build_siamese_model, one_vgg16_stream
+from img_generator import MyImageGenerator
+import tensorflow as tf
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping
+from model_building import DistLayer
+
+
+def train_model(epochs=200, batch_size=16, patience=None, model_exists=False, lr=1e-4):
+    """trains the NN for face recognition"""
+    gpus = tf.config.list_physical_devices('GPU')
+    # checking for GPU on device
+    try:
+        tf.config.set_visible_devices(gpus[0], 'GPU')
+        tf.config.experimental.set_memory_growth(gpus[0], True)
+    except IndexError:
+        pass
+
+    # setting train and validation generators
+    train = MyImageGenerator(n_pairs=8000, batch_size=batch_size, input_size=(224, 224))
+    val = MyImageGenerator(n_pairs=2000, batch_size=batch_size, input_size=(224, 224))
+
+    # loads model if exists (building if not)
+    if model_exists:
+        model = tf.keras.models.load_model('twin_model.h5', custom_objects={'DistLayer': DistLayer})
+    else:
+        model = build_siamese_model(one_vgg16_stream(trainable=True))
+        model.compile(optimizer=Adam(learning_rate=lr), loss='binary_crossentropy', metrics='accuracy')
+
+    # if early stopping is set
+    if patience:
+        es = EarlyStopping(
+            monitor='val_loss',
+            patience=patience,
+            restore_best_weights=True)
+
+    # try for the keyboard interrupt
+    try:
+        model.fit(
+            train,
+            validation_data=val,
+            epochs=epochs,
+            callbacks=[es])
+    except KeyboardInterrupt():
+        pass
+    # saves the model
+    finally:
+        model.save('twin_model_v2.h5')
+
+
+if __name__ == '__main__':
+    train_model(batch_size=4, model_exists=False, patience=20, lr=1e-4, epochs=50)
