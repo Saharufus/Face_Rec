@@ -6,7 +6,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from model_building import DistLayer
 
 
-def train_model(epochs=200, batch_size=16, patience=None, model_exists=False, lr=1e-4):
+def train_model(epochs=200, batch_size=16, patience=None, model_exists=False, lr=1e-4, model_name='model.h5'):
     """trains the NN for face recognition"""
     gpus = tf.config.list_physical_devices('GPU')
     # checking for GPU on device
@@ -22,31 +22,32 @@ def train_model(epochs=200, batch_size=16, patience=None, model_exists=False, lr
 
     # loads model if exists (building if not)
     if model_exists:
-        model = tf.keras.models.load_model('twin_model.h5', custom_objects={'DistLayer': DistLayer})
+        model = tf.keras.models.load_model(model_name, custom_objects={'DistLayer': DistLayer})
     else:
         model = build_siamese_model(one_vgg16_stream(trainable=True))
         model.compile(optimizer=Adam(learning_rate=lr), loss='binary_crossentropy', metrics='accuracy')
 
     # if early stopping is set
     if patience:
-        es = EarlyStopping(
+        es = [EarlyStopping(
             monitor='val_loss',
             patience=patience,
-            restore_best_weights=True)
+            restore_best_weights=True)]
+    else:
+        es = None
 
-    # try for the keyboard interrupt
     try:
         model.fit(
             train,
             validation_data=val,
             epochs=epochs,
-            callbacks=[es])
+            callbacks=es)
     except KeyboardInterrupt():
         pass
     # saves the model
     finally:
-        model.save('twin_model_v2.h5')
+        model.save(model_name)
 
 
 if __name__ == '__main__':
-    train_model(batch_size=4, model_exists=False, patience=20, lr=1e-4, epochs=50)
+    train_model(batch_size=4, model_exists=False, lr=1e-4, epochs=50, model_name='FR_v1.h5')
