@@ -17,8 +17,8 @@ def train_model(epochs=200, batch_size=16, patience=None, model_exists=False, lr
         pass
 
     # setting train and validation generators
-    train = MyImageGenerator(n_pairs=8000, batch_size=batch_size, input_size=(224, 224))
-    val = MyImageGenerator(n_pairs=2000, batch_size=batch_size, input_size=(224, 224))
+    train = MyImageGenerator(n_pairs=10000, batch_size=batch_size, input_size=(224, 224))
+    val = MyImageGenerator(n_pairs=2500, batch_size=batch_size, input_size=(224, 224))
 
     # loads model if exists (building if not)
     if model_exists:
@@ -50,4 +50,4 @@ def train_model(epochs=200, batch_size=16, patience=None, model_exists=False, lr
 
 
 if __name__ == '__main__':
-    train_model(batch_size=4, model_exists=False, lr=1e-4, epochs=50, model_name='FR_v1.h5')
+    train_model(batch_size=8, model_exists=True, lr=1e-4, epochs=50, model_name='FR_v1.h5', patience=20)

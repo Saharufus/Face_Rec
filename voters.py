@@ -40,4 +40,4 @@ def create_voters(name):
 
 
 if __name__ == '__main__':
-    create_voters('Orelle')
+    create_voters('Sahar')

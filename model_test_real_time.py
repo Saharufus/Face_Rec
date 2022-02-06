@@ -26,7 +26,7 @@ def identify_loop(name, model_name, voters_threshold=0.5, mean_voters_threshold=
         if cv.waitKey(1) & 0XFF == ord('i'):
             # starting to identify
             print('Identifying...')
-            image = rescale_resize(frame)
+            image = rescale_resize(cv.cvtColor(frame, cv.COLOR_BGR2RGB))
             # creating set if images with the length of the voters
             image_set = np.array([image for voter in voters])
             # predicting for every voter
@@ -48,4 +48,4 @@ def identify_loop(name, model_name, voters_threshold=0.5, mean_voters_threshold=
 
 
 if __name__ == '__main__':
-    identify_loop('Orelle', 'twin_model.h5', 0.8, 0.8)
+    identify_loop('Sahar', 'FR_v1.h5', 0.3, 0.8)
