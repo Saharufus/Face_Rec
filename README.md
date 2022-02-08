@@ -19,13 +19,15 @@ The anchor and input are flattened and concatenated together to form a one 375,0
 
 We do not expect to get good results from this model. Getting 51% accuracy assures us that we are on the right path.
 
-### CNN Model:
+### Twin CNN:
 - The model will get the two images after preprocessing:
   - Anchor (224, 224, 3)
   - Input (224, 224, 3)
 - The two images will go through the VGG16 embedding stage. While the model trains it trains on the same embedding for both images.
 - Out of the embedding we get two vectors that enter an L1 distance layer. Here the distance between the two images is measured. 
 - One last dense layer with a sigmoid activation to get us a binary classification.
+
+![img](https://ashvijay.github.io/assets/img/STN.jpg)
 
 ## Project stages
 **Let’s start! 🚀**
