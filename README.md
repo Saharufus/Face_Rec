@@ -23,6 +23,8 @@ Before we start, we will separate our data in this 3 folders: `positive, negativ
 
 We need to make sure we have pictures of ourselves and from random people in all of our folders in a balanced way (positive, negative and anchor).
 
+The dataset consist of 112868 rows. In each row there are 3 columns: the path of the anchor image, the path of the image to be compared (positive or negative) and finally the classification (1 if they are equal and 0 otherwise), making all possible combinations between the anchor and the negative sets and the anchor and the positive sets. It is important, memorywise, to use the path and not the image itself (the pixels). To access the images and train the NN, a generator is used.
+
 **Let’s start! 🚀**
 
 ### 1.	Build the dataset with images of ourselves: we are going to use Open CV which allows the access to our camera. We need to make sure the resolution of the image is 255x255. 
@@ -38,7 +40,7 @@ In order to preprocess we need to resize and scale the data.
 Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `51%`.
 The accuracy is really bad - it's the same as saying that the images are always the same or that they are always different.
 
-In this step, the dataframe consists on 2271 rows with pictures of ourselves and random people. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
+In this step, the dataframe consists on 4542 rows with pictures of ourselves and random people. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
 
 ### Prerequirements:
 -	Install requirements.txt
@@ -55,7 +57,9 @@ In this step, the dataframe consists on 2271 rows with pictures of ourselves and
 - [sklearn](https://scikit-learn.org/stable/)
 - [warnings](https://docs.python.org/3/library/warnings.html)
 - [seaborn](https://seaborn.pydata.org/)
-
+- [glob](https://docs.python.org/3/library/glob.html)
+- [collections](https://docs.python.org/3/library/collections.html)
+- [random](https://docs.python.org/3/library/random.html)
 
 ### Contents of the repository:
 - `baseline_model.ipynb`: where the baseline model is created
