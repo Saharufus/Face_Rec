@@ -34,7 +34,6 @@ The dataset consist of 112868 rows. In each row there are 3 columns: the path of
 `q`: closes the camera
 
 ### 2.	Preprocessing and EDA
-<<<<<<< HEAD
 In order to preprocess we need to resize and scale the data. 
 
 ### 3. Baseline Model
@@ -42,7 +41,7 @@ Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `5
 The accuracy is really bad - it's the same as saying that the images are always the same or that they are always different.
 
 In this step, the dataframe consists on 4542 rows with pictures of ourselves and random people. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
-=======
+
 The EDA consists in observing how the different categories of images are balanced, checking that the images have the same size and displaying a random sample of images from each class.
 
 In order to preprocess we need to resize and scale the data. 
@@ -51,7 +50,6 @@ In order to preprocess we need to resize and scale the data.
 Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `95%`.
 
 In this step, the dataframe consists on 200 rows with pictures of ourselves. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
->>>>>>> fff872533f17b7a45b43ad55ea5f507391e1a342
 
 ### Prerequirements:
 -	Install requirements.txt
@@ -71,7 +69,6 @@ In this step, the dataframe consists on 200 rows with pictures of ourselves. For
 - [glob](https://docs.python.org/3/library/glob.html)
 - [collections](https://docs.python.org/3/library/collections.html)
 - [random](https://docs.python.org/3/library/random.html)
-=======
 
 ### Contents of the repository:
 - `baseline_model.ipynb`: where the baseline model is created
@@ -83,8 +80,6 @@ In this step, the dataframe consists on 200 rows with pictures of ourselves. For
 - `requirements.txt`
 - `creating_DF.ipynb`: where all the images from the folders were reorganized so that we have a balanced dataset.
 - `creating_DF.py`: where the functions needed for creating the DF are stored.
-=======
-
 
 ### References
 [Youtube Video](https://www.youtube.com/watch?v=LKispFFQ5GU)
@@ -92,3 +87,4 @@ In this step, the dataframe consists on 200 rows with pictures of ourselves. For
 
 ### Authors 
 > Authors: Noam Cohen, Sahar Garber and Julieta Staryfurman
+
