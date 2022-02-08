@@ -105,3 +105,9 @@ An image will be taken (the input) and then be compared to a set of voter images
 ### Authors 
 > Authors: Noam Cohen, Sahar Garber and Julieta Staryfurman
 
+# Important For GitHub Cloning
+This repo has some large files. To get them we use git lfs (large file storage).  
+To use git lfs go to [here](https://git-lfs.github.com/) and download git lfs to your machine. After that enter in command line in the git repo:  
+`$ git lfs install`  
+Then, as you do with normal git, pull the repo from GitHub and the large files will be tracked by git lfs and downloaded to your machine.
+
