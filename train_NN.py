@@ -50,4 +50,4 @@ def train_model(epochs=200, batch_size=16, patience=None, model_exists=False, lr
 
 
 if __name__ == '__main__':
-    train_model(batch_size=8, model_exists=True, lr=1e-4, epochs=50, model_name='FR_v1.h5', patience=20)
+    train_model(batch_size=8, model_exists=True, lr=1e-6, epochs=50, model_name='FR_v1.h5', patience=20)
