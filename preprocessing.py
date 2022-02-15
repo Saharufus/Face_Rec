@@ -1,93 +1,107 @@
-import tensorflow as tf
+import numpy as np
+import os
+import cv2 as cv
+from sklearn.model_selection import train_test_split
+from random import randint
+import config
 
 
-# -------------------------------------------------------------------------------------------------
-# helper functions
-# -------------------------------------------------------------------------------------------------
-def scaler(filepath):
-    """
-    scale the img to 105x105 pixels and pix vals [0, 1]
-    :param filepath: the path to *.jpg
-    :returns: scaled img"""
-    # load img
-    loaded_img = tf.io.read_file(filepath)
-    img = tf.io.decode_jpeg(loaded_img)
-    # resize
-    img = tf.image.resize(img, (105, 105))
-    # rescale
-    img = img / 255
-    return img
+# ---------------------------------------------------------------------------------------------------------------
+# Helper functions
+# ---------------------------------------------------------------------------------------------------------------
+
+def rescale_resize(img):
+    """rescale the image"""
+    return cv.resize(img, config.IMG_SHAPE) / 255
 
 
-def label(data1, data2, is_twin=True):
-    """
-    label the img if same person or not
-    :param data1: anchor
-    :param data2: positive / negative
-    :param is_twin: True / False
-    :return: labeled dataset
-    """
-    # label 1 for same person
-    if is_twin:
-        return tf.data.Dataset.zip((data1, data2, tf.data.Dataset.from_tensor_slices(tf.ones(len(data1)))))
-    # label 0 for different person
-    elif not is_twin:
-        return tf.data.Dataset.zip((data1, data2, tf.data.Dataset.from_tensor_slices(tf.zeros(len(data1)))))
+def get_img(path):
+    """converts path of image to RGB numpy array"""
+    return cv.cvtColor(cv.imread(path), cv.COLOR_BGR2RGB)
 
 
-def prepro_2_img(filepath1, filepath2, is_twin):
-    """this function is for mapping the preprocess on the dataset"""
-    return scaler(filepath1), scaler(filepath2), is_twin
+def load_positive_pair():
+    """loads a positive pair of images"""
+    data_list = os.listdir('data')
+    # get a random image
+    anc_file = data_list[randint(0, len(data_list) - 1)]
+    anc_name = anc_file[:-9]
+    anc_num = anc_file[-8:-4]
+
+    # get a random pair from same person directory
+    anc_dir_list = os.listdir(os.path.join('lfw', anc_name))
+    pos_file = anc_dir_list[randint(0, len(anc_dir_list) - 1)]
+    pos_num = pos_file[-8:-4]
+    # shuffle until different image
+    while pos_num == anc_num:
+        pos_file = anc_dir_list[randint(0, len(anc_dir_list)-1)]
+        pos_num = pos_file[-8:-4]
+
+    anc_path = os.path.join('data', anc_file)
+    pos_path = os.path.join('data', pos_file)
+    return get_img(anc_path), get_img(pos_path)
 
 
-# -------------------------------------------------------------------------------------------------
-# create and preprocess for dataset
-# -------------------------------------------------------------------------------------------------
-def create_dataset(anchor, positive, negative):
-    """
-    creates a labeled dataset with positives and negatives
-    :param anchor: tf Dataset of anchor img
-    :param positive: tf Dataset of positive img
-    :param negative: tf Dataset of negative img
-    :return: tf Dataset of positive and negative against anchor with label
-    """
-    # label positive
-    positive_labeled = label(anchor, positive, True)
-    # label negative
-    negative_labeled = label(anchor, negative, False)
-    # concat, map and cache
-    data = positive_labeled.concatenate(negative_labeled)
-    data = data.map(prepro_2_img)
-    data = data.cache()
-    return data
+def load_negative_pair():
+    """loads a negative pair of images"""
+    data_list = os.listdir('data')
+    # get a random image
+    anc_file = data_list[randint(0, len(data_list) - 1)]
+    anc_name = anc_file[:-9]
+
+    # get a another random image
+    neg_file = data_list[randint(0, len(data_list) - 1)]
+    neg_name = neg_file[:-9]
+    # shuffle until different person
+    while neg_name == anc_name:
+        neg_file = data_list[randint(0, len(data_list) - 1)]
+        neg_name = neg_file[:-9]
+
+    anc_path = os.path.join('data', anc_file)
+    neg_path = os.path.join('data', neg_file)
+    return get_img(anc_path), get_img(neg_path)
 
 
-# -------------------------------------------------------------------------------------------------
-# train test split
-# -------------------------------------------------------------------------------------------------
-def split_train_test(data, train_size=0.8, batch_size=16, prefetch_size=8, shuffle=True):
-    """
-    splits the data into train_data and test_data
-    :param data: data to split
-    :param train_size: percentage of train out of data
-    :param batch_size: the batches size in the data
-    :param prefetch_size: data to prepare
-    :param shuffle: True or False if shuffle or not
-    :return: train_data, test_data
-    """
-    # shuffling:
-    if shuffle:
-        data = data.shuffle(buffer_size=len(data)*10)
+# ---------------------------------------------------------------------------------------------------------------
+# main functions
+# ---------------------------------------------------------------------------------------------------------------
 
-    # preparing the train data:
-    train = data.take(round(len(data)*train_size))
-    train = train.batch(batch_size)
-    train = train.prefetch(prefetch_size)
+def load_all_from_path(path):
+    """loads every file from path and return it as numpy array"""
+    dir_list = os.listdir(path)
+    imgs = []
+    for file in dir_list:
+        img = get_img(os.path.join(path, file))
+        img = rescale_resize(img)
+        imgs.append(img)
+    return np.array(imgs)
 
-    # preparing the test data:
-    test = data.skip(round(len(data)*train_size))
-    test = test.take(round(len(data)*(1-train_size)))
-    test = test.batch(batch_size)
-    test = test.prefetch(prefetch_size)
 
-    return train, test
+def create_dataset(num_of_samples):
+    """creates dataset with 2*num_os_samples rows of images"""
+    imgs = []
+
+    # get positive
+    for i in range(num_of_samples):
+        anc, pos = load_positive_pair()
+        anc = rescale_resize(anc)
+        pos = rescale_resize(pos)
+        imgs.append([anc, pos])
+
+    # get negative
+    for i in range(num_of_samples):
+        anc, neg = load_negative_pair()
+        anc = rescale_resize(anc)
+        neg = rescale_resize(neg)
+        imgs.append([anc, neg])
+
+    # get labels
+    labels = np.concatenate([np.ones(num_of_samples), np.zeros(num_of_samples)])
+    return np.array(imgs), labels
+
+
+def train_test_img_split(imgs, labels, train_size=.8):
+    """splits data to train and test"""
+    ind = range(len(labels))
+    train, test = train_test_split(ind, train_size=train_size)
+    return imgs[train, :, :, :, :], imgs[test, :, :, :, :], labels[train], labels[test]

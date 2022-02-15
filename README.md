@@ -3,50 +3,88 @@
 ![img](https://miro.medium.com/max/1400/1*DKSQVZdEa2GEv2ksxWViTg.gif)
 
 ### Our project
-In this project we are going to build a NN that will help us compare if to pictures are of the same person. 📸
+In this project we are going to build a CNN that will help us compare if to pictures are of the same person. 📸
 
-We will use the dataset of [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/#download) enriched with some pictures of ourselves to make sure that we have enough amount of samples of the same person.🤩 This is what the dataset looks like in some examples:
+We will use the dataset of [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/#download) enriched with some pictures of ourselves.🤩
 
-![img](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9cDUOIjbzfmtp4hhEyJ6EaNGdLAOk73a6ew&usqp=CAU)
+This model is a binary prediction model.  
+For a better understanding we will set two terminology words:
+- `Anchor`:  The picture to compare to.  
+- `Input`: The picture that is being compared.
 
-In order to do our predictions we are going to base our model in similarities and that’s why  it’s important that we divide our images in (`triplet loss`):
+### Baseline Model
+Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `51%` (random guess).
 
-`Anchor dataset`:  actual image. The picture to compare to.  
+The anchor and input are flattened and concatenated together to form a one 375,001 size vector (1 for the label) and sent into the GNB model
 
-`Positive verification dataset`: image of the same person. It is going to be an image of the same person as in the anchor.  (1 - True)
+We do not expect to get good results from this model. Getting 51% accuracy assures us that we are on the right path.
 
-`Negative verification dataset`: image of a different person. It is going to be an image of the LFW dataset.  (0 - False)
+### Twin CNN:
+- The model will get the two images after preprocessing:
+  - Anchor (224, 224, 3)
+  - Input (224, 224, 3)
+- The two images will go through the VGG16 embedding stage. While the model trains it trains on the same embedding for both images.
+- Out of the embedding we get two vectors that enter an L1 distance layer. Here the distance between the two images is measured. 
+- One last dense layer with a sigmoid activation to get us a binary classification.
 
-We’re going to compare the anchor image with the input image and it will compare if both images are the same person. 
+![img](https://ashvijay.github.io/assets/img/STN.jpg)
 
-Before we start, we will separate our data in this 3 folders: `positive, negative and anchor`. 
-
+<<<<<<< HEAD
 We need to make sure we have pictures of ourselves and from random people in all of our folders in a balanced way (positive, negative and anchor).
 
 The dataset consist of 112868 rows. In each row there are 3 columns: the path of the anchor image, the path of the image to be compared (positive or negative) and finally the classification (1 if they are equal and 0 otherwise), making all possible combinations between the anchor and the negative sets and the anchor and the positive sets. It is important, memorywise, to use the path and not the image itself (the pixels). To access the images and train the NN, a generator is used.
 
+=======
+## Project stages
+>>>>>>> main
 **Let’s start! 🚀**
 
-### 1.	Build the dataset with images of ourselves: we are going to use Open CV which allows the access to our camera. We need to make sure the resolution of the image is 255x255. 
+### 1.	Downloading the LFW dataset and enriching it with pictures of ourselves
+* Downloading LFW and adding pictures of ourselves.
+* Extracting pictures of people that has more than one picture in their folder to a folder named data (including the new pictures)
 
-`a`: takes an anchor picture
-`p`: takes a positive picture
-`q`: closes the camera
+### 2. Dataset building
+getting image from the data folder as anchor.
 
-### 2.	Preprocessing and EDA
-In order to preprocess we need to resize and scale the data. 
+For positive:  
+Taking another image from the directory of the person that in the anchor
 
+For the negative:
+Taking a random image of a different person from the data folder
+
+(At the training we will use a Keras custom image generator to load the data)
+
+### 3. Preprocessing
+Resizing and rescaling the data.
+
+### 4. Training the model
+The model was trained using ADAM optimizer in three stages, each stage took 50 epochs, with the exception of early stopping if necessary:
+- 1st stage: lr = 1e-4
+- 2nd stage: lr = 1e-5
+- 3rd stage: lr = 1e-6  
+  (lr: learning rate)
+
+<<<<<<< HEAD
 ### 3. Baseline Model
 Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `51%`.
 The accuracy is really bad - it's the same as saying that the images are always the same or that they are always different.
 
 In this step, the dataframe consists on 4542 rows with pictures of ourselves and random people. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
+=======
+That was to ensure that the model will have a low loss as possible.
+
+### 4. Testing the model
+#### Setting up voters:
+Taking a set of voter images to place as the anchors to the input image.
+#### Comparing input to voters:
+An image will be taken (the input) and then be compared to a set of voter images. The average of the outcomes will be the confidence of the model if the person is the same as the voters or not
+>>>>>>> main
 
 ### Prerequirements:
--	Install requirements.txt
--	Work with Google Colab using their GPU
+-	conda \ pip Install **requirements.txt**
+-	**GPU required for training**. This project trains a CNN, so either work on local GPU or use a cloud GPU.
 
-### Libraries:
+#### Libraries:
 - [cv2](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html)
 - [os](https://docs.python.org/3/library/os.html)
 - [numpy](https://numpy.org/doc/)
@@ -64,18 +102,31 @@ In this step, the dataframe consists on 4542 rows with pictures of ourselves and
 ### Contents of the repository:
 - `baseline_model.ipynb`: where the baseline model is created
 - `baseline_model.py`: where the baseline model functions are created
-- `conf.py`: with the constants
+- `config.py`: with the constants
 - `get_samples.ipnyb`: where we create the dataset with pictures of ourselves
 - `preprocessing.py`: where the preprocessing functions take place
-- `data`: a folder with the 3 folders: `anchor`, `positive` and `negative`.
 - `requirements.txt`
 - `creating_DF.ipynb`: where all the images from the folders were reorganized so that we have a balanced dataset.
 - `creating_DF.py`: where the functions needed for creating the DF are stored.
+<<<<<<< HEAD
 
+=======
+- `img_generator.py`: Custom image generator
+- `train_NN.py`: Training loop for CNN
+- `voters.py`: Function that takes pictures to set as voters
+- `model_test_real_time.py`: A test function for trained model
+>>>>>>> main
 
 ### References
-[Youtube Video](https://www.youtube.com/watch?v=LKispFFQ5GU)
+[Youtube Video](https://www.youtube.com/watch?v=LKispFFQ5GU)  
 [paper](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf)
 
 ### Authors 
 > Authors: Noam Cohen, Sahar Garber and Julieta Staryfurman
+
+# Important For GitHub Cloning
+This repo has some large files. To get them we use git lfs (large file storage).  
+To use git lfs go to [here](https://git-lfs.github.com/) and download git lfs to your machine. After that enter in command line in the git repo:  
+`$ git lfs install`  
+Then, as you do with normal git, pull the repo from GitHub and the large files will be tracked by git lfs and downloaded to your machine.
+
