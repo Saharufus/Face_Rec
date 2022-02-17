@@ -42,12 +42,12 @@ The dataset consist of 112868 rows. In each row there are 3 columns: the path of
 * Extracting pictures of people that has more than one picture in their folder to a folder named data (including the new pictures)
 
 ### 2. Dataset building
-getting image from the data folder as anchor.
+Getting image from the data folder and using them as anchor.
 
-For positive:  
+**For positive**:  
 Taking another image from the directory of the person that in the anchor
 
-For the negative:
+**For the negative**:
 Taking a random image of a different person from the data folder
 
 (At the training we will use a Keras custom image generator to load the data)
