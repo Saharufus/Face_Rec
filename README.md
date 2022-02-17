@@ -74,7 +74,6 @@ That was to ensure that the model will have a low loss as possible.
 Taking a set of voter images to place as the anchors to the input image.
 #### Comparing input to voters:
 An image will be taken (the input) and then be compared to a set of voter images. The average of the outcomes will be the confidence of the model if the person is the same as the voters or not
->>>>>>> main
 
 ### Prerequirements:
 -	conda \ pip Install **requirements.txt**
