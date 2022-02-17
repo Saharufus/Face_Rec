@@ -29,14 +29,12 @@ We do not expect to get good results from this model. Getting 51% accuracy assur
 
 ![img](https://ashvijay.github.io/assets/img/STN.jpg)
 
-<<<<<<< HEAD
+
 We need to make sure we have pictures of ourselves and from random people in all of our folders in a balanced way (positive, negative and anchor).
 
 The dataset consist of 112868 rows. In each row there are 3 columns: the path of the anchor image, the path of the image to be compared (positive or negative) and finally the classification (1 if they are equal and 0 otherwise), making all possible combinations between the anchor and the negative sets and the anchor and the positive sets. It is important, memorywise, to use the path and not the image itself (the pixels). To access the images and train the NN, a generator is used.
 
-=======
 ## Project stages
->>>>>>> main
 **Let’s start! 🚀**
 
 ### 1.	Downloading the LFW dataset and enriching it with pictures of ourselves
@@ -64,13 +62,11 @@ The model was trained using ADAM optimizer in three stages, each stage took 50 e
 - 3rd stage: lr = 1e-6  
   (lr: learning rate)
 
-<<<<<<< HEAD
 ### 3. Baseline Model
 Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `51%`.
 The accuracy is really bad - it's the same as saying that the images are always the same or that they are always different.
 
 In this step, the dataframe consists on 4542 rows with pictures of ourselves and random people. For each picture we have 11025 columns that correspond to the pixels of the anchor image and another 11025 that are the pixels of the picture that we are comparing to the anchor (in same cases positive and in other cases negative). The label is 1 if the images are the same or 0 if they are not.
-=======
 That was to ensure that the model will have a low loss as possible.
 
 ### 4. Testing the model
@@ -108,14 +104,10 @@ An image will be taken (the input) and then be compared to a set of voter images
 - `requirements.txt`
 - `creating_DF.ipynb`: where all the images from the folders were reorganized so that we have a balanced dataset.
 - `creating_DF.py`: where the functions needed for creating the DF are stored.
-<<<<<<< HEAD
-
-=======
 - `img_generator.py`: Custom image generator
 - `train_NN.py`: Training loop for CNN
 - `voters.py`: Function that takes pictures to set as voters
 - `model_test_real_time.py`: A test function for trained model
->>>>>>> main
 
 ### References
 [Youtube Video](https://www.youtube.com/watch?v=LKispFFQ5GU)  
