@@ -12,6 +12,8 @@ For a better understanding we will set two terminology words:
 - `Anchor`:  The picture to compare to.  
 - `Input`: The picture that is being compared.
 
+Checkout our [Medium Article](https://medium.com/@julistary/face-recognition-dcnn-1e6d9ad404f6)
+
 ### Baseline Model
 Our baseline model is a `Gaussian Naive Bayes Classifier` with an accuracy of `51%` (random guess).
 
